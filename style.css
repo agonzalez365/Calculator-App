@@ -1,0 +1,57 @@
+/* Using a lot of the styling from portfolio website because it will eventually be housed there */
+
+/* using color variables from portfolio site */
+:root {
+    --navbar-color: #fb8b24;
+    --navbar-color-2: #b7094c;
+    --navbar-text-color: #FFFFFF;
+    --button-hover-color: #91093d;
+    --hover-color: rgba(102, 24, 44, 0.3);
+    --nav-highlight-color: #f9c74f;
+    --page-color: #332c3b;
+}
+
+/* resets */
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700&display=swap');
+
+h1 {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+body {
+    background-color: var(--page-color);
+    color: var(--navbar-text-color);
+}
+
+#calculator-inputs {
+    background-color: #18141b;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    width: 300px;
+}
+
+.number, .operation {
+    display: flex;
+    justify-content: center;
+    font-size: xx-large;
+}
+
+sup {
+    font-size: medium;
+}
+
+/* .number {
+    color: red;
+}
+
+.operation {
+    color: blue;
+} */
