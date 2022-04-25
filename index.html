@@ -6,12 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculator App</title>
     <link rel="stylesheet" href="./style.css">
+    <script src="./index.js"></script>
 </head>
 <body>
     <main>
-        <h1>Calculator</h1>
 
-        <div id="calc-wrapper">
+        <div id="calc-container">
+            <div id="calc-label">
+                <h1>Calculator</h1>
+            </div>
+            <div id="calculator-screen">
+                <p id="current-input">1 + </p>
+                <p id="result">0</p>
+            </div>
             <div id="calculator-inputs">
                 <div class="column">
                     <div class="operation">Clr</div>
