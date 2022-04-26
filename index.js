@@ -52,7 +52,7 @@ $(document).ready(function () {
             case 'Clr':
                 //reset state and clear display
                 equation = [''];
-                currentInput.html('&nbsp;');
+                currentInput.text(equation);
                 break;
             default:
                 //update the display normally

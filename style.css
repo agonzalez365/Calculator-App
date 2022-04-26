@@ -54,7 +54,13 @@ h1 {
     text-align: end;
 }
 
+#prev-inputs {
+    padding-right: 1ch;
+    height: 18px;
+}
+
 #current-input {
+    height: 38px;
     font-size: xx-large;
 }
 
