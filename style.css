@@ -54,7 +54,7 @@ h1 {
     text-align: end;
 }
 
-#result {
+#current-input {
     font-size: xx-large;
 }
 
@@ -77,8 +77,19 @@ h1 {
 
 .number:hover, .operation:hover {
     transform: scale(1.1);
+    transition: transform 300ms;
     cursor: pointer;
     background-color: #4a4055;
+}
+
+.number:not(:hover), .operation:not(:hover) {
+    transform: scale(1);
+    transition: transform 300ms;
+}
+
+.number:active {
+    transition: background-color 100ms;
+    background-color: #806f93;
 }
 
 sup {
