@@ -121,7 +121,7 @@ $(document).ready(function () {
     //handle and update display
     function updateScreen(calculate) {
         console.log(equation);
-        if(!calculate){+
+        if(!calculate){
             currentInput.text(equation.join(' '));
         }
         else {
