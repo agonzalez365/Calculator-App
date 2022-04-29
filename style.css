@@ -72,7 +72,7 @@ h1 {
     width: 360px;
 }
 
-.number, .operation {
+.keypad {
     display: flex;
     justify-content: center;
     font-size: xx-large;
@@ -82,19 +82,19 @@ h1 {
     border-radius: 0.5rem;
 }
 
-.number:hover, .operation:hover {
+.keypad:hover {
     transform: scale(1.1);
     transition: transform 300ms;
     cursor: pointer;
     background-color: #4a4055;
 }
 
-.number:not(:hover), .operation:not(:hover) {
+.keypad:not(:hover) {
     transform: scale(1);
     transition: transform 300ms;
 }
 
-.number:active {
+.keypad:active {
     transition: background-color 100ms;
     background-color: #806f93;
 }

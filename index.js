@@ -5,14 +5,37 @@ $(document).ready(function () {
     const prevInputs = $('#prev-inputs');
     let equation = [];
 
-
-    //inputs
+    //clickable inputs
     $('.operation').on('click', function () {
-        updateInputDisplay($(this).text());
+        const id = $(this).attr('id');
+        switch($(this).attr('id')){
+            case '+':
+                handleOperator(id);
+                break;
+            case '-':
+                handleOperator(id);
+                break;
+            case '*':
+                handleOperator(id);
+                break;
+            case '/':
+                handleOperator(id);
+                break;
+            case '=':
+                handleCalculation();
+                break;
+            case '.':
+                handleDecimalPoint();
+                break;
+        }
     })
     $('.number').on('click', function () {
-        updateInputDisplay($(this).text());
+        handleNumber($(this).text());
     })
+    $('.decimal-point').on('click', function () {
+        handleDecimalPoint();
+    })
+    //keyboard inputs
     $(document).on('keypress', function (event) {
         //looks kinda funky but this will check if a number is pressed, or if an operator is pressed
         //it will then call the related function that handles the input
@@ -34,10 +57,13 @@ $(document).ready(function () {
                 handleOperator(event.key);
                 break;
             case '=':
-                handleCalculation();
+                handleCalculation(equation);
+                break;
+            case '.':
+                handleDecimalPoint();
                 break;
             case 'Enter':
-                handleCalculation();
+                handleCalculation(equation);
                 break;
             case 'c':
                 handleClear();
@@ -67,7 +93,6 @@ $(document).ready(function () {
     }
 
     function handleNumber(number){
-        console.log('number');
         //if equation is not empty, proceed
         if(equation.length > 0) {
             //if last element in array is an operator, add the number as a new element
@@ -84,6 +109,19 @@ $(document).ready(function () {
             equation.push(number);
         }
         updateScreen(false);
+    }
+
+    function handleDecimalPoint() {
+        if(equation.length > 0){
+            if(!equation[equation.length - 1].includes('.')){
+                equation[equation.length - 1] += '.';
+                updateScreen(false);
+            }
+        }
+        else {
+            equation[0] = '0.';
+            updateScreen(false);
+        }
     }
 
     function handleDeletion(){
@@ -111,12 +149,22 @@ $(document).ready(function () {
     }
 
 
-    function handleCalculation() {
+    function handleCalculation(equationArray) {
+        //TO DO
         console.log('calculate');
+        //this function will do several passes over the equation array
+        for(let i = 0; i < equationArray.length; i++){
+            if(equationArray[i]){
+            }
+        }
+    }
+
+    //use with handle calculation to evaluate parts of the expression
+    function operationEvaluator() {
+        
     }
 
 
-    //TO DO: check if previous element is operation before pushing to array
     //TO DO: Limit input size
     //handle and update display
     function updateScreen(calculate) {
