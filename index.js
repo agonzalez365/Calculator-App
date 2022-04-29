@@ -113,7 +113,7 @@ $(document).ready(function () {
 
     function handleDecimalPoint() {
         if(equation.length > 0){
-            if(!equation[equation.length - 1].includes('.')){
+            if(!equation[equation.length - 1].includes('.') && !isNaN(Number(equation[equation.length - 1]))){
                 equation[equation.length - 1] += '.';
                 updateScreen(false);
             }
