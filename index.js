@@ -36,6 +36,9 @@ $(document).ready(function () {
             case 'Del':
                 handleDeletion();
                 break;
+            case 'p/n':
+                togglePositive();
+                break;
             default:
                 break;
         }
@@ -167,6 +170,17 @@ $(document).ready(function () {
         updateScreen([]);
     }
 
+    function togglePositive() {
+        //make sure equation isnt empty
+        if(equation.length > 0){
+            //if last element is a number, toggle whether it is positive
+            if(!isNaN(Number(equation[equation.length - 1]))){
+                equation[equation.length - 1] = equation[equation.length - 1] * -1;
+                updateScreen([]);
+            }
+        }
+    }
+
     function handleCalculation(equationArray) {
         //probably a way to do this without multiple loops
         //but this is my scuffed solution to implement functioning order of operations
@@ -204,11 +218,11 @@ $(document).ready(function () {
                     }
                 }
             }
-    
+
             //console.log('Before filter: ' + equationArray);
             equationArray = filterArray(equationArray);
             //console.log('After filter: ' + equationArray);
-    
+
             //multiplication/division pass
             for (let i = 1; i < equationArray.length; i += 2) {
                 if (i <= equationArray.length) {
@@ -221,11 +235,11 @@ $(document).ready(function () {
                     }
                 }
             }
-    
+
             //console.log('Before filter: ' + equationArray);
             equationArray = filterArray(equationArray);
             //console.log('After filter: ' + equationArray);
-    
+
             //addition/subtraction pass
             for (let i = 1; i < equationArray.length; i += 2) {
                 if (i <= equationArray.length) {
@@ -238,16 +252,17 @@ $(document).ready(function () {
                     }
                 }
             }
-    
+
             //console.log('Before filter: ' + equationArray);
             equationArray = filterArray(equationArray);
             //console.log('After filter: ' + equationArray);
-    
+
             updateScreen(equationArray);
         }
-        
+
     }
 
+    //remove elements that are marked for removal ('d') from arrays, so more passes can be done
     function filterArray(array) {
         array = array.filter(function (element) {
             if (element !== 'd') {
