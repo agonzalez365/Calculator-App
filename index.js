@@ -22,7 +22,7 @@ $(document).ready(function () {
                 handleOperator(id);
                 break;
             case '=':
-                handleCalculation();
+                handleCalculation(equation.slice());
                 break;
             case '.':
                 handleDecimalPoint();
@@ -88,7 +88,7 @@ $(document).ready(function () {
             else {
                 equation.push(operator);
             }
-            updateScreen(false);
+            updateScreen([]);
         }
     }
 
@@ -108,19 +108,26 @@ $(document).ready(function () {
         else {
             equation.push(number);
         }
-        updateScreen(false);
+        updateScreen([]);
     }
 
     function handleDecimalPoint() {
         if(equation.length > 0){
-            if(!equation[equation.length - 1].includes('.') && !isNaN(Number(equation[equation.length - 1]))){
-                equation[equation.length - 1] += '.';
-                updateScreen(false);
+            //if last element is check if it already has a
+            if(!isNaN(Number(equation[equation.length - 1]))){
+                if(!equation[equation.length - 1].includes('.')){
+                    equation[equation.length - 1] += '.';
+                    updateScreen([]);
+                }
+            }
+            else {
+                equation.push('0.');
+                updateScreen([]);
             }
         }
         else {
             equation[0] = '0.';
-            updateScreen(false);
+            updateScreen([]);
         }
     }
 
@@ -134,8 +141,9 @@ $(document).ready(function () {
             //if the last element is a number, remove the last number
             else {
                 equation[equation.length - 1] = equation[equation.length - 1].slice(0, -1);
-                if(equation[0] === ''){
-                    equation = [];
+                //if element ends up empty, remove it from the array
+                if(equation[equation.length - 1] === ''){
+                    equation.pop();
                 }
             }
             updateScreen();
@@ -145,36 +153,107 @@ $(document).ready(function () {
     function handleClear(){
         //reset equation
         equation = [];
-        updateScreen(false);
+        updateScreen([]);
     }
-
 
     function handleCalculation(equationArray) {
         //TO DO
-        console.log('calculate');
         //this function will do several passes over the equation array
-        for(let i = 0; i < equationArray.length; i++){
-            if(equationArray[i]){
+        //order of operations, fun.
+        //multiplication pass
+        //test all addition
+
+        //probably a way to do this without multiple loops
+        //but this is my scuffed solution to implement functioning order of operations
+        //multiplication/division pass
+        for(let i = 1; i < equationArray.length; i += 2){
+            if(i <= equationArray.length) {
+                if(equationArray[i] === '*' || equationArray[i] === '/'){
+                    console.log(equationArray[i]);
+                    //operate on values next to operator
+                    //assign result to element on the right so the iterations can continue
+                    equationArray[i + 1] = operationEvaluator(Number(equationArray[i - 1]), Number(equationArray[i + 1]), equationArray[i]);
+                    //mark for removal
+                    equationArray[i - 1] = 'd';
+                    equationArray[i] =  'd';
+                }
             }
         }
+        
+        //filter before next pass
+        equationArray = filterArray(equationArray);
+        console.log(equationArray);
+
+        //addition/subtraction pass
+        for(let i = 1; i < equationArray.length; i += 2){
+            if(i <= equationArray.length) {
+                if(equationArray[i] === '+' || equationArray[i] === '-'){
+                    console.log(equationArray[i]);
+                    equationArray[i + 1] = operationEvaluator(Number(equationArray[i - 1]), Number(equationArray[i + 1]), equationArray[i]);
+                    //mark for removal
+                    equationArray[i - 1] = 'd';
+                    equationArray[i] =  'd';
+                }
+            }
+        }
+
+        equationArray = filterArray(equationArray);
+        console.log(equationArray);
+
+        updateScreen(equationArray);
+
+    }
+
+    function filterArray(array){
+        array = array.filter(function (element) {
+            if(element !== 'd'){
+                return true;
+            }
+            else {
+                return false;
+            }
+        });
+        return array;
     }
 
     //use with handle calculation to evaluate parts of the expression
-    function operationEvaluator() {
+    function operationEvaluator(val1, val2, operation) {
+        if(typeof operation === 'string'){
+            let result;
+            switch(operation){
+                case '+':
+                    result = val1 + val2;
+                    break;
+                case '-':
+                    result = val1 - val2;
+                    break;
+                case '*':
+                    result = val1 * val2;
+                    break;
+                case '/':
+                    result = val1 / val2;
+                    break;
+                default:
+                    break;
+            }
+            return result.toString();
+        }
+        else {
+            console.log('what happened');
+        }
         
     }
 
-
     //TO DO: Limit input size
     //handle and update display
-    function updateScreen(calculate) {
-        console.log(equation);
-        if(!calculate){
+    function updateScreen(array) {
+        if(array.length === 0){
             currentInput.text(equation.join(' '));
         }
         else {
             prevInputs.text(equation.join(' '));
-            currentInput.text('something');
+            currentInput.text(array);
+            equation = array;
         }
     }
 })
