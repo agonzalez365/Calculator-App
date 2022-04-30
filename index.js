@@ -6,7 +6,7 @@ $(document).ready(function () {
     let equation = [];
 
     //clickable inputs
-    $('.operation').on('click', function () {
+    $('.operation').on('click', function (event) {
         const id = $(this).attr('id');
         switch ($(this).attr('id')) {
             case '+':
@@ -21,11 +21,22 @@ $(document).ready(function () {
             case '/':
                 handleOperator(id);
                 break;
+            case '**':
+                handleOperator(id);
+                break;
             case '=':
                 handleCalculation(equation.slice());
                 break;
             case '.':
                 handleDecimalPoint();
+                break;
+            case 'Clr':
+                handleClear();
+                break;
+            case 'Del':
+                handleDeletion();
+                break;
+            default:
                 break;
         }
     })
@@ -151,56 +162,90 @@ $(document).ready(function () {
 
     function handleClear() {
         //reset equation
+        prevInputs.text('');
         equation = [];
         updateScreen([]);
     }
 
     function handleCalculation(equationArray) {
-        //TO DO
-        //this function will do several passes over the equation array
-        //order of operations, fun.
-        //multiplication pass
-        //test all addition
-
         //probably a way to do this without multiple loops
         //but this is my scuffed solution to implement functioning order of operations
+
+        //this function will do several passes of the copied equation array following order of operations
+        //each pass will only calculate specific operators
+        //parentheses (not implemented)
+        //exponent pass
         //multiplication/division pass
-        for (let i = 1; i < equationArray.length; i += 2) {
-            if (i <= equationArray.length) {
-                if (equationArray[i] === '*' || equationArray[i] === '/') {
-                    console.log(equationArray[i]);
-                    //operate on values next to operator
-                    //assign result to element on the right so the iterations can continue
-                    equationArray[i + 1] = operationEvaluator(Number(equationArray[i - 1]), Number(equationArray[i + 1]), equationArray[i]);
-                    //mark for removal
-                    equationArray[i - 1] = 'd';
-                    equationArray[i] = 'd';
-                }
-            }
-        }
-
-        //filter before next pass
-        equationArray = filterArray(equationArray);
-        console.log(equationArray);
-
         //addition/subtraction pass
-        for (let i = 1; i < equationArray.length; i += 2) {
-            if (i <= equationArray.length) {
-                if (equationArray[i] === '+' || equationArray[i] === '-') {
-                    console.log(equationArray[i]);
-                    equationArray[i + 1] = operationEvaluator(Number(equationArray[i - 1]), Number(equationArray[i + 1]), equationArray[i]);
-                    //mark for removal
-                    equationArray[i - 1] = 'd';
-                    equationArray[i] = 'd';
+        //all except parentheses will function about the same
+
+        //uncomment the console logs in between passes to see what's happening to the array
+        //console.log('Initial Array: ' + equationArray);
+
+        //if equation is empty, do nothing
+        if (equation.length > 0) {
+            //if the last element is not a nummber, remove it from both arrays
+            if (isNaN(Number(equationArray[equationArray.length - 1]))) {
+                equationArray.pop();
+                equation.pop();
+            }
+            console.log(equationArray);
+
+            //exponent pass
+            for (let i = 1; i < equationArray.length; i += 2) {
+                if (i <= equationArray.length) {
+                    if (equationArray[i] === '**') {
+                        //operate on values next to operator and assign the result
+                        //assign result to element on the right so the iterations can continue
+                        equationArray[i + 1] = operationEvaluator(Number(equationArray[i - 1]), Number(equationArray[i + 1]), equationArray[i]);
+                        //mark for removal
+                        equationArray[i - 1] = 'd';
+                        equationArray[i] = 'd';
+                    }
                 }
             }
+    
+            //console.log('Before filter: ' + equationArray);
+            equationArray = filterArray(equationArray);
+            //console.log('After filter: ' + equationArray);
+    
+            //multiplication/division pass
+            for (let i = 1; i < equationArray.length; i += 2) {
+                if (i <= equationArray.length) {
+                    if (equationArray[i] === '*' || equationArray[i] === '/') {
+                        //operate on values next to operator and assign the result
+                        equationArray[i + 1] = operationEvaluator(Number(equationArray[i - 1]), Number(equationArray[i + 1]), equationArray[i]);
+                        //mark for removal
+                        equationArray[i - 1] = 'd';
+                        equationArray[i] = 'd';
+                    }
+                }
+            }
+    
+            //console.log('Before filter: ' + equationArray);
+            equationArray = filterArray(equationArray);
+            //console.log('After filter: ' + equationArray);
+    
+            //addition/subtraction pass
+            for (let i = 1; i < equationArray.length; i += 2) {
+                if (i <= equationArray.length) {
+                    if (equationArray[i] === '+' || equationArray[i] === '-') {
+                        //operate on values next to operator and assign the result
+                        equationArray[i + 1] = operationEvaluator(Number(equationArray[i - 1]), Number(equationArray[i + 1]), equationArray[i]);
+                        //mark for removal
+                        equationArray[i - 1] = 'd';
+                        equationArray[i] = 'd';
+                    }
+                }
+            }
+    
+            //console.log('Before filter: ' + equationArray);
+            equationArray = filterArray(equationArray);
+            //console.log('After filter: ' + equationArray);
+    
+            updateScreen(equationArray);
         }
-
-        equationArray = filterArray(equationArray);
-        console.log(equationArray);
-
-        updateScreen(equationArray);
-
+        
     }
 
     function filterArray(array) {
@@ -217,39 +262,40 @@ $(document).ready(function () {
 
     //use with handle calculation to evaluate parts of the expression
     function operationEvaluator(val1, val2, operation) {
-        if (typeof operation === 'string') {
-            let result;
-            switch (operation) {
-                case '+':
-                    result = val1 + val2;
-                    break;
-                case '-':
-                    result = val1 - val2;
-                    break;
-                case '*':
-                    result = val1 * val2;
-                    break;
-                case '/':
-                    result = val1 / val2;
-                    break;
-                default:
-                    break;
-            }
-            return result.toString();
+        let result;
+        switch (operation) {
+            case '+':
+                result = val1 + val2;
+                break;
+            case '-':
+                result = val1 - val2;
+                break;
+            case '*':
+                result = val1 * val2;
+                break;
+            case '/':
+                result = val1 / val2;
+                break;
+            case '**':
+                result = val1 ** val2;
+                break;
+            default:
+                break;
         }
-        else {
-            console.log('what happened');
-        }
-
+        return result.toString();
     }
 
     //TO DO: Limit input size
     //handle and update display
     function updateScreen(array) {
+        console.log('state: ' + equation);
         if (array.length === 0) {
             currentInput.text(equation.join(' '));
         }
         else {
+            $('#log').append(`
+            <p>${equation.join(' ')} = ${array[0]}</p>
+            `)
             prevInputs.text(equation.join(' '));
             currentInput.text(array[0]);
             equation = array;

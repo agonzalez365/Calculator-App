@@ -50,7 +50,7 @@ h1 {
     background-color: rgb(38, 35, 41);
 }
 
-#calculator-screen p {
+#calculator-screen div {
     padding-right: 1ch;
     text-align: end;
 }
@@ -101,4 +101,22 @@ h1 {
 
 sup {
     font-size: medium;
+}
+
+#log {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 1ch;
+    border: solid #0a0a0b;
+    border-radius: 0.5rem;
+    background-color: #18141b;
+    width: 300px;
+    margin: auto;
+}
+
+#log p {
+    padding: 0.5ch;
+    width: fit-content;
 }
