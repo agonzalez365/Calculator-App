@@ -57,13 +57,13 @@ $(document).ready(function () {
                 handleOperator(event.key);
                 break;
             case '=':
-                handleCalculation(equation);
+                handleCalculation(equation.slice());
                 break;
             case '.':
                 handleDecimalPoint();
                 break;
             case 'Enter':
-                handleCalculation(equation);
+                handleCalculation(equation.slice());
                 break;
             case 'c':
                 handleClear();
