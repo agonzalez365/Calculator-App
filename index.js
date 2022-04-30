@@ -287,8 +287,10 @@ $(document).ready(function () {
 
     //TO DO: Limit input size
     //handle and update display
+    //if an empty array is passed, overwrite currentInput text with the current equation
+    //else log the current equation to the history box, and overwrite prevInputs text with equation and currentInputs with the equation result
+    //then reset the equation to equal the result
     function updateScreen(array) {
-        console.log('state: ' + equation);
         if (array.length === 0) {
             currentInput.text(equation.join(' '));
         }
