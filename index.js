@@ -146,7 +146,7 @@ $(document).ready(function () {
                     equation.pop();
                 }
             }
-            updateScreen();
+            updateScreen([]);
         }
     }
 
@@ -252,7 +252,7 @@ $(document).ready(function () {
         }
         else {
             prevInputs.text(equation.join(' '));
-            currentInput.text(array);
+            currentInput.text(array[0]);
             equation = array;
         }
     }
