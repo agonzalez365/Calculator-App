@@ -30,6 +30,9 @@ $(document).ready(function () {
             case '.':
                 handleDecimalPoint();
                 break;
+            case '%':
+                handlePercent();
+                break;
             case 'Clr':
                 handleClear();
                 break;
@@ -78,6 +81,9 @@ $(document).ready(function () {
                 break;
             case 'Enter':
                 handleCalculation(equation.slice());
+                break;
+            case '%':
+                handlePercent();
                 break;
             case 'c':
                 handleClear();
@@ -144,6 +150,16 @@ $(document).ready(function () {
         }
     }
 
+    function handlePercent() {
+        if (equation.length > 0) {
+            if (!isNaN(Number(equation[equation.length - 1]))) {
+                equation.push('/');
+                equation.push('100');
+                updateScreen([]);
+            }
+        }
+    }
+
     function handleDeletion() {
         //if equation isn't empty, proceed, otherwise do nothing
         if (equation.length > 0) {
@@ -172,9 +188,9 @@ $(document).ready(function () {
 
     function togglePositive() {
         //make sure equation isnt empty
-        if(equation.length > 0){
+        if (equation.length > 0) {
             //if last element is a number, toggle whether it is positive
-            if(!isNaN(Number(equation[equation.length - 1]))){
+            if (!isNaN(Number(equation[equation.length - 1]))) {
                 equation[equation.length - 1] = equation[equation.length - 1] * -1;
                 updateScreen([]);
             }
