@@ -54,17 +54,28 @@ $(document).ready(function () {
         handleDecimalPoint();
     })
     $('#equation-log').on('click', 'button.eq', function () {
-        console.log('click');
         setEquation($(this).attr('id'));
     })
+    $('#clear-log').on('click', function () {
+        equationHistory = [];
+        $('#equation-log').empty();
+    });
     //keyboard inputs
-    $(document).on('keypress', function (event) {
-        //looks kinda funky but this will check if a number is pressed, or if an operator is pressed
-        //it will then call the related function that handles the input
+    $(document).on('keydown', function (event) {
+        //check for numbers and backspace
         //fun fact: apparently converting an empty string into a number returns 0 instead of NaN
         if (!isNaN(Number(event.key)) && event.key !== ' ') {
             handleNumber(event.key);
         }
+        switch (event.key) {
+            case 'Backspace':
+                handleDeletion();
+                break;
+            default:
+                break;
+        }
+    })
+    $(document).on('keyup', function (event) {
         switch (event.key) {
             case '+':
                 handleOperator(event.key);
@@ -84,22 +95,17 @@ $(document).ready(function () {
             case '.':
                 handleDecimalPoint();
                 break;
-            case 'Enter':
-                handleCalculation(equation.slice());
-                break;
             case '%':
                 handlePercent();
                 break;
-            case 'c':
-                handleClear();
-                break;
-            case 'd':
-                handleDeletion();
+            case 'Enter':
+                handleCalculation(equation.slice());
                 break;
             default:
                 break;
         }
     })
+
 
     function handleOperator(operator) {
         //if equation isn't empty, proceed
