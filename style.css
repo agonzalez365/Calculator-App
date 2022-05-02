@@ -82,14 +82,14 @@ h1 {
     border-radius: 0.5rem;
 }
 
-.keypad:hover {
+.keypad:hover, #clear-log:hover, .eq:hover {
     transform: scale(1.1);
     transition: transform 300ms;
     cursor: pointer;
     background-color: #4a4055;
 }
 
-.keypad:not(:hover) {
+.keypad:not(:hover), #clear-log:not(:hover), .eq:not(:hover) {
     transform: scale(1);
     transition: transform 300ms;
 }
@@ -116,7 +116,29 @@ sup {
     margin: auto;
 }
 
-#log p {
+#log div {
     padding: 0.5ch;
     width: fit-content;
+}
+
+#clear-log {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: medium;
+    font-weight: bold;
+    color: white;
+    background-color: #332c3b;
+    padding: 1ch;
+    border: none;
+    border-radius: 0.5rem;
+}
+
+.eq {
+    font-weight: bold;
+    color: white;
+    background-color: #332c3b;
+    padding: 1ch;
+    border: none;
+    border-radius: 0.5rem;
 }

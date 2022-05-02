@@ -4,6 +4,7 @@ $(document).ready(function () {
     const currentInput = $('#current-input');
     const prevInputs = $('#prev-inputs');
     let equation = [];
+    let equationHistory = [];
 
     //clickable inputs
     $('.operation').on('click', function (event) {
@@ -51,6 +52,10 @@ $(document).ready(function () {
     })
     $('.decimal-point').on('click', function () {
         handleDecimalPoint();
+    })
+    $('#equation-log').on('click', 'button.eq', function () {
+        console.log('click');
+        setEquation($(this).attr('id'));
     })
     //keyboard inputs
     $(document).on('keypress', function (event) {
@@ -316,6 +321,13 @@ $(document).ready(function () {
         return result.toString();
     }
 
+    //sets prevInputs to previous equation and sets currentInput and equation array to result of previous equation
+    function setEquation(id) {
+        equation = [equationHistory[id].result];
+        currentInput.text(equation);
+        prevInputs.text(equationHistory[id].equation.join(' '));
+    }
+
     //TO DO: Limit input size
     //handle and update display
     //if an empty array is passed, overwrite currentInput text with the current equation
@@ -326,8 +338,17 @@ $(document).ready(function () {
             currentInput.text(equation.join(' '));
         }
         else {
-            $('#log').append(`
-            <p>${equation.join(' ')} = ${array[0]}</p>
+            equationHistory.push({
+                result: array[0],
+                equation: equation
+            });
+            //append equation to log
+            //append a button with an id equal to corresponding index in equation history
+            $('#equation-log').append(`
+            <div>
+                <span>${equation.join(' ')} = ${array[0]}</span>
+                <button id="${$('#equation-log').find('div').length}" class="eq">Get</button>
+            </div>
             `)
             prevInputs.text(equation.join(' '));
             currentInput.text(array[0]);
