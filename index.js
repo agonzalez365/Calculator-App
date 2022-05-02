@@ -230,7 +230,6 @@ $(document).ready(function () {
                 equationArray.pop();
                 equation.pop();
             }
-            console.log(equationArray);
 
             //exponent pass
             for (let i = 1; i < equationArray.length; i += 2) {
@@ -253,12 +252,27 @@ $(document).ready(function () {
             //multiplication/division pass
             for (let i = 1; i < equationArray.length; i += 2) {
                 if (i <= equationArray.length) {
-                    if (equationArray[i] === '*' || equationArray[i] === '/') {
+                    if (equationArray[i] === '*') {
                         //operate on values next to operator and assign the result
                         equationArray[i + 1] = operationEvaluator(Number(equationArray[i - 1]), Number(equationArray[i + 1]), equationArray[i]);
                         //mark for removal
                         equationArray[i - 1] = 'd';
                         equationArray[i] = 'd';
+                    }
+                    else if (equationArray[i] === '/') {
+                        if (equationArray[i + 1] === '0') {
+                            //if dividing by 0, cancel out of equation
+                            handleClear();
+                            alert('Cannot divide by 0');
+                            return;
+                        }
+                        else {
+                            //same operation that happens on multiplication
+                            equationArray[i + 1] = operationEvaluator(Number(equationArray[i - 1]), Number(equationArray[i + 1]), equationArray[i]);
+                            equationArray[i - 1] = 'd';
+                            equationArray[i] = 'd';
+                        }
+
                     }
                 }
             }
@@ -284,6 +298,7 @@ $(document).ready(function () {
             equationArray = filterArray(equationArray);
             //console.log('After filter: ' + equationArray);
 
+            //pass the solved equation to updateScreen
             updateScreen(equationArray);
         }
 
