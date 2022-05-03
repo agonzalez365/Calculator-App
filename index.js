@@ -40,6 +40,9 @@ $(document).ready(function () {
             case ')':
                 handleParentheses(id);
                 break;
+            case 'sqrt':
+                handleSqrt();
+                break;
             case 'Clr':
                 handleClear();
                 break;
@@ -220,6 +223,15 @@ $(document).ready(function () {
 
         //parentheses handled, update screen
         updateScreen([]);
+    }
+
+    function handleSqrt() {
+        if(equation.length > 0) {
+            equation[equation.length - 1] = Math.sqrt(equation[equation.length - 1]);
+
+            //square root handled, update screen
+            updateScreen([]);
+        }
     }
 
     function handleDeletion() {
