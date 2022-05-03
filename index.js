@@ -122,14 +122,23 @@ $(document).ready(function () {
     function handleOperator(operator) {
         //if equation isn't empty, proceed
         if (equation.length > 0) {
-            //if previous input is already an operator, replace the operator
+            //if last element is already an operator or parenthesis, proceed
             if (isNaN(Number(equation[equation.length - 1]))) {
-                equation[equation.length - 1] = operator;
+                //if last element is not an opening parenthesis, reassign it
+                if(equation[equation.length - 1] !== '(' && equation[equation.length - 1] !== ')') {
+                    equation[equation.length - 1] = operator;
+                }
+                //if last element is a closing parenthesis, push the operator
+                else if (equation[equation.length -1] === ')') {
+                    equation.push(operator);
+                }
             }
             //else just add the operator to the array
             else {
                 equation.push(operator);
             }
+
+            //operator handled, update screen
             updateScreen([]);
         }
     }
@@ -137,43 +146,51 @@ $(document).ready(function () {
     function handleNumber(number) {
         //if equation is not empty, proceed
         if (equation.length > 0) {
-            //if last element in array is an operator, add the number as a new element
-            if (isNaN(Number(equation[equation.length - 1]))) {
-                equation.push(number);
+            //if last element in array is an operator or parenthesis, proceed
+            if (isNaN(Number(equation[equation.length - 1]))){
+                //if last element is not a closing parenthesis, add number to end of array
+                if(equation[equation.length - 1] !== ')') {
+                    equation.push(number);
+                }
             }
             //else just append the number to the existing number
             else {
                 equation[equation.length - 1] += number;
             }
+
+
         }
         //if equation is empty
         else {
             equation.push(number);
         }
+
+        //number handled, update screen
         updateScreen([]);
     }
 
     function handleDecimalPoint() {
         if (equation.length > 0) {
-            //if last element is check if it already has a
+            //if last element is a number, check if it already has a decimal point
             if (!isNaN(Number(equation[equation.length - 1]))) {
                 if (!equation[equation.length - 1].includes('.')) {
                     equation[equation.length - 1] += '.';
-                    updateScreen([]);
                 }
             }
             else {
                 equation.push('0.');
-                updateScreen([]);
             }
         }
         else {
             equation[0] = '0.';
-            updateScreen([]);
         }
+
+        //decimal point handled, update screen
+        updateScreen([]);
     }
 
     function handlePercent() {
+        // functionally just a divide by 100 button with current implementation
         if (equation.length > 0) {
             if (!isNaN(Number(equation[equation.length - 1]))) {
                 equation.push('/');
@@ -184,12 +201,21 @@ $(document).ready(function () {
     }
 
     function handleParentheses(input) {
-        if (input === ')') {
-            console.log('closing');
+        //opening parentheses can be added without additonal checks, any unclosed parentheses will be closed on calculation if user did not close them
+        if (input === '(') {
+            equation.push('(');
         }
+        //closing parentheses will only be added if the amount of closing parentheses is less than the amount of opening parentheses
         else {
-            console.log('opening');
+            const openCount = equation.filter((element) => element === '(');
+            const closeCount = equation.filter((element) => element === ')');
+            if (openCount.length > closeCount.length) {
+                equation.push(')');
+            }
         }
+        
+        //parentheses handled, update screen
+        updateScreen([]);
     }
 
     function handleDeletion() {
@@ -207,14 +233,18 @@ $(document).ready(function () {
                     equation.pop();
                 }
             }
+
+            //deletion handled, update screen
             updateScreen([]);
         }
     }
 
     function handleClear() {
-        //reset equation
+        //reset equation state and display
         prevInputs.text('');
         equation = [];
+
+        //clear handled, update screen
         updateScreen([]);
     }
 
