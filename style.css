@@ -30,7 +30,6 @@ body {
     width: 360px;
     border: solid #0a0a0b;
     border-radius: 0.5rem;
-    overflow: hidden;
 }
 
 #calc-label {
@@ -46,6 +45,7 @@ h1 {
 #calculator-screen {
     display: flex;
     flex-direction: column;
+    overflow-x: scroll;
     padding: 1ch;
     background-color: rgb(38, 35, 41);
 }

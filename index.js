@@ -9,7 +9,7 @@ $(document).ready(function () {
     //clickable inputs
     $('.operation').on('click', function (event) {
         const id = $(this).attr('id');
-        switch ($(this).attr('id')) {
+        switch (id) {
             case '+':
                 handleOperator(id);
                 break;
@@ -33,6 +33,12 @@ $(document).ready(function () {
                 break;
             case '%':
                 handlePercent();
+                break;
+            case '(':
+                handleParentheses(id);
+                break;
+            case ')':
+                handleParentheses(id);
                 break;
             case 'Clr':
                 handleClear();
@@ -97,6 +103,12 @@ $(document).ready(function () {
                 break;
             case '%':
                 handlePercent();
+                break;
+            case '(':
+                handleParentheses(event.key);
+                break;
+            case ')':
+                handleParentheses(event.key);
                 break;
             case 'Enter':
                 handleCalculation(equation.slice());
@@ -168,6 +180,15 @@ $(document).ready(function () {
                 equation.push('100');
                 updateScreen([]);
             }
+        }
+    }
+
+    function handleParentheses(input) {
+        if (input === ')') {
+            console.log('closing');
+        }
+        else {
+            console.log('opening');
         }
     }
 
