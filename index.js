@@ -125,11 +125,11 @@ $(document).ready(function () {
             //if last element is already an operator or parenthesis, proceed
             if (isNaN(Number(equation[equation.length - 1]))) {
                 //if last element is not an opening parenthesis, reassign it
-                if(equation[equation.length - 1] !== '(' && equation[equation.length - 1] !== ')') {
+                if (equation[equation.length - 1] !== '(' && equation[equation.length - 1] !== ')') {
                     equation[equation.length - 1] = operator;
                 }
                 //if last element is a closing parenthesis, push the operator
-                else if (equation[equation.length -1] === ')') {
+                else if (equation[equation.length - 1] === ')') {
                     equation.push(operator);
                 }
             }
@@ -147,9 +147,9 @@ $(document).ready(function () {
         //if equation is not empty, proceed
         if (equation.length > 0) {
             //if last element in array is an operator or parenthesis, proceed
-            if (isNaN(Number(equation[equation.length - 1]))){
+            if (isNaN(Number(equation[equation.length - 1]))) {
                 //if last element is not a closing parenthesis, add number to end of array
-                if(equation[equation.length - 1] !== ')') {
+                if (equation[equation.length - 1] !== ')') {
                     equation.push(number);
                 }
             }
@@ -201,19 +201,23 @@ $(document).ready(function () {
     }
 
     function handleParentheses(input) {
-        //opening parentheses can be added without additonal checks, any unclosed parentheses will be closed on calculation if user did not close them
+        //if opening parenthesis, proceed
         if (input === '(') {
-            equation.push('(');
+            //if previous element is an operator / parenthesis (it should only be opening)
+            //push opening parenthesis
+            if (isNaN(Number(equation[equation.length - 1]))) {
+                equation.push('(');
+            }
         }
         //closing parentheses will only be added if the amount of closing parentheses is less than the amount of opening parentheses
         else {
-            const openCount = equation.filter((element) => element === '(');
-            const closeCount = equation.filter((element) => element === ')');
-            if (openCount.length > closeCount.length) {
+            const openCount = equation.filter((element) => element === '(').length;
+            const closeCount = equation.filter((element) => element === ')').length;
+            if (openCount > closeCount) {
                 equation.push(')');
             }
         }
-        
+
         //parentheses handled, update screen
         updateScreen([]);
     }
@@ -260,99 +264,148 @@ $(document).ready(function () {
     }
 
     function handleCalculation(equationArray) {
-        //probably a way to do this without multiple loops
-        //but this is my scuffed solution to implement functioning order of operations
+        //probably a way to do this without so many loops
+        //but this is my scuffed solution to implement functioning order of operations/PEMDAS
 
         //this function will do several passes of the copied equation array following order of operations
-        //each pass will only calculate specific operators
-        //parentheses (not implemented)
+        //each pass (except parentheses) will only calculate specific operators
+
+        //parentheses pass - will solve all expressions inside parentheses starting from the innermost pair
+        //it will then evaluate the expression inside those parentheses 
+        //by doing specific passes to solve operators following order of operations
+
+        //these three function almost identically
+        //they iterate over the array checking for specific operator(s), if they match, it solves them
+        //i bundled the passes up into one function ( emdasPass() ) in order to implement parentheses
         //exponent pass
         //multiplication/division pass
         //addition/subtraction pass
-        //all except parentheses will function about the same
-
-        //uncomment the console logs in between passes to see what's happening to the array
-        //console.log('Initial Array: ' + equationArray);
 
         //if equation is empty, do nothing
         if (equation.length > 0) {
-            //if the last element is not a nummber, remove it from both arrays
+            //if the last element is an operator, remove it from both arrays
             if (isNaN(Number(equationArray[equationArray.length - 1]))) {
-                equationArray.pop();
-                equation.pop();
-            }
-
-            //exponent pass
-            for (let i = 1; i < equationArray.length; i += 2) {
-                if (i <= equationArray.length) {
-                    if (equationArray[i] === '**') {
-                        //operate on values next to operator and assign the result
-                        //assign result to element on the right so the iterations can continue
-                        equationArray[i + 1] = operationEvaluator(Number(equationArray[i - 1]), Number(equationArray[i + 1]), equationArray[i]);
-                        //mark for removal
-                        equationArray[i - 1] = 'd';
-                        equationArray[i] = 'd';
-                    }
+                if (equationArray[equationArray.length - 1] !== '(' || equationArray[equationArray.length - 1] !== ')') {
+                    equationArray.pop();
+                    equation.pop();
                 }
             }
 
-            //console.log('Before filter: ' + equationArray);
-            equationArray = filterArray(equationArray);
-            //console.log('After filter: ' + equationArray);
-
-            //multiplication/division pass
-            for (let i = 1; i < equationArray.length; i += 2) {
-                if (i <= equationArray.length) {
-                    if (equationArray[i] === '*') {
-                        //operate on values next to operator and assign the result
-                        equationArray[i + 1] = operationEvaluator(Number(equationArray[i - 1]), Number(equationArray[i + 1]), equationArray[i]);
-                        //mark for removal
-                        equationArray[i - 1] = 'd';
-                        equationArray[i] = 'd';
-                    }
-                    else if (equationArray[i] === '/') {
-                        if (equationArray[i + 1] === '0') {
-                            //if dividing by 0, cancel out of equation
-                            handleClear();
-                            alert('Cannot divide by 0');
-                            return;
-                        }
-                        else {
-                            //same operation that happens on multiplication
-                            equationArray[i + 1] = operationEvaluator(Number(equationArray[i - 1]), Number(equationArray[i + 1]), equationArray[i]);
-                            equationArray[i - 1] = 'd';
-                            equationArray[i] = 'd';
-                        }
-
-                    }
+            //first, close any open parentheses
+            let openCount = equation.filter((element) => element === '(').length;
+            let closeCount = equation.filter((element) => element === ')').length;
+            if (openCount > closeCount) {
+                let amountToClose = openCount- closeCount;
+                for (amountToClose; amountToClose > 0; amountToClose--) {
+                    equationArray.push(')');
                 }
+                //make equation match as well (for display purposes)
+                equation = equationArray.slice();
             }
 
-            //console.log('Before filter: ' + equationArray);
-            equationArray = filterArray(equationArray);
-            //console.log('After filter: ' + equationArray);
+            //as long as openCount is not 0, there are expressions that still need to be solved
+            //this loop solves each expression starting from the innermost pair of parentheses until there are no more
+            //once, there are no more, a regular pass can be done over the equation
+            for (openCount; openCount > 0; openCount--) {
+                //the last open parenthesis can be matched to the first closing parenthesis in each pass
+                let lastOpenIndex = equationArray.lastIndexOf('(');
+                let firstClosingIndex = equationArray.indexOf(')');
+                
+                //do an emdas pass over the sliced array and set it equal to the solvedExpression
+                let solvedExpression = emdasPass(equationArray.slice(lastOpenIndex + 1, firstClosingIndex));
 
-            //addition/subtraction pass
-            for (let i = 1; i < equationArray.length; i += 2) {
-                if (i <= equationArray.length) {
-                    if (equationArray[i] === '+' || equationArray[i] === '-') {
-                        //operate on values next to operator and assign the result
-                        equationArray[i + 1] = operationEvaluator(Number(equationArray[i - 1]), Number(equationArray[i + 1]), equationArray[i]);
-                        //mark for removal
-                        equationArray[i - 1] = 'd';
-                        equationArray[i] = 'd';
-                    }
+                //mark elements that have been solved for deletion (exlcuding closing parenthesis, it will be replaced)
+                for (let i = lastOpenIndex; i < firstClosingIndex; i++) {
+                    equationArray[i] = 'd';
                 }
+
+                //replace closing parenthesis with the value of the solved expression
+                equationArray[firstClosingIndex] = solvedExpression[0];
+
+                //finally, filter out elements marked for deletion in the array now that solved expression has been inserted
+                equationArray = filterArray(equationArray);
             }
 
-            //console.log('Before filter: ' + equationArray);
-            equationArray = filterArray(equationArray);
-            //console.log('After filter: ' + equationArray);
+            equationArray = emdasPass(equationArray);
 
             //pass the solved equation to updateScreen
             updateScreen(equationArray);
         }
 
+    }
+
+    //this function does pemdas, without the p
+    function emdasPass(equationArray) {
+        //each pass here functions almost identically, they just check for different things
+
+        //exponent pass
+        for (let i = 1; i < equationArray.length; i += 2) {
+            if (i <= equationArray.length) {
+                if (equationArray[i] === '**') {
+                    //operate on values next to operator and assign the result
+                    //assign result to element on the right so the iterations can continue
+                    equationArray[i + 1] = operationEvaluator(Number(equationArray[i - 1]), Number(equationArray[i + 1]), equationArray[i]);
+                    //mark for removal
+                    equationArray[i - 1] = 'd';
+                    equationArray[i] = 'd';
+                }
+            }
+        }
+
+        //console.log('Before filter: ' + equationArray);
+        equationArray = filterArray(equationArray);
+        //console.log('After filter: ' + equationArray);
+
+        //multiplication/division pass
+        for (let i = 1; i < equationArray.length; i += 2) {
+            if (i <= equationArray.length) {
+                if (equationArray[i] === '*') {
+                    //operate on values next to operator and assign the result
+                    equationArray[i + 1] = operationEvaluator(Number(equationArray[i - 1]), Number(equationArray[i + 1]), equationArray[i]);
+                    //mark for removal
+                    equationArray[i - 1] = 'd';
+                    equationArray[i] = 'd';
+                }
+                else if (equationArray[i] === '/') {
+                    if (equationArray[i + 1] === '0') {
+                        //if dividing by 0, cancel out of equation
+                        handleClear();
+                        alert('Cannot divide by 0');
+                        return;
+                    }
+                    else {
+                        //same operation that happens on multiplication
+                        equationArray[i + 1] = operationEvaluator(Number(equationArray[i - 1]), Number(equationArray[i + 1]), equationArray[i]);
+                        equationArray[i - 1] = 'd';
+                        equationArray[i] = 'd';
+                    }
+
+                }
+            }
+        }
+
+        //console.log('Before filter: ' + equationArray);
+        equationArray = filterArray(equationArray);
+        //console.log('After filter: ' + equationArray);
+
+        //addition/subtraction pass
+        for (let i = 1; i < equationArray.length; i += 2) {
+            if (i <= equationArray.length) {
+                if (equationArray[i] === '+' || equationArray[i] === '-') {
+                    //operate on values next to operator and assign the result
+                    equationArray[i + 1] = operationEvaluator(Number(equationArray[i - 1]), Number(equationArray[i + 1]), equationArray[i]);
+                    //mark for removal
+                    equationArray[i - 1] = 'd';
+                    equationArray[i] = 'd';
+                }
+            }
+        }
+
+        //console.log('Before filter: ' + equationArray);
+        equationArray = filterArray(equationArray);
+        //console.log('After filter: ' + equationArray);
+
+        return equationArray;
     }
 
     //remove elements that are marked for removal ('d') from arrays, so more passes can be done
@@ -406,6 +459,7 @@ $(document).ready(function () {
     //else log the current equation to the history box, and overwrite prevInputs text with equation and currentInputs with the equation result
     //then reset the equation to equal the result
     function updateScreen(array) {
+        console.log(equation);
         if (array.length === 0) {
             currentInput.text(equation.join(' '));
         }
