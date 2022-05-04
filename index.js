@@ -227,7 +227,11 @@ $(document).ready(function () {
 
     function handleSqrt() {
         if(equation.length > 0) {
-            equation[equation.length - 1] = Math.sqrt(equation[equation.length - 1]);
+            //if prev input is not a number, remove it and then find square root
+            if(isNaN(Number(equation[equation.length - 1]))){
+                equation.pop();
+            }
+            equation[equation.length - 1] = Math.sqrt(equation[equation.length - 1]);         
 
             //square root handled, update screen
             updateScreen([]);
