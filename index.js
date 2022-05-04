@@ -321,21 +321,16 @@ $(document).ready(function () {
             //this loop solves each expression starting from the innermost pair of parentheses until there are no more
             //once, there are no more, a regular pass can be done over the equation
             for (openCount; openCount > 0; openCount--) {
-                //the last open parenthesis can be matched to the first closing parenthesis in each pass*
+                //we get the last opening parenthesis, and then iterate off of it to find the matched closing parenthesis
                 let lastOpenIndex = equationArray.lastIndexOf('(');
-                let firstClosingIndex = equationArray.indexOf(')');
-                //*in a case where there are multiple sets of parentheses [ex: (5 + 5) * (5) rather than (or accompanying) nested parenthesis (5 + (5 * 5))]
-                //firstClosingIndex can end up mismatched using this method, so we check if it is, and iterate to find the next closing index
-                //there are probably more clever ways to solve this issue
-                if(firstClosingIndex < lastOpenIndex){
-                    for (let i = lastOpenIndex; i < equationArray.length; i++){
-                        if(equationArray[i] === ')') {
-                            firstClosingIndex = i;
-                            break;
-                        }
+                let firstClosingIndex;
+                for (let i = lastOpenIndex; i < equationArray.length; i++){
+                    if(equationArray[i] === ')') {
+                        firstClosingIndex = i;
+                        break;
                     }
                 }
-                
+
                 //do an emdas pass over the sliced array and set it equal to the solvedExpression
                 let solvedExpression = emdasPass(equationArray.slice(lastOpenIndex + 1, firstClosingIndex));
 
